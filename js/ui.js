@@ -38,22 +38,44 @@ class Interfaz {
     }
     //imprime el resultado de la cotizacion
     mostrarResultado(resultado, moneda, crypto){
+//en caso de un resultado anterior, ocultarlo
+const resultadoAnterior = document.querySelector('#resultado > div');
+if(resultadoAnterior){
+    resultadoAnterior.remove();
+}
+
         const datosMoneda = resultado[crypto] [moneda];
         console.log(datosMoneda);
         //recortar digitos de precio
-        let precio = datosMoneda.PRICE.toFixed(2);
+        let precio = datosMoneda.PRICE.toFixed(2),
+        porcentaje = datosMoneda.CHANGEPCTDAY.toFixed(2),
+        actualizado = new Date(datosMoneda.LASTUPDATE * 1000).toLocaleDateString('es-UY');
         //construir el template
         let templateHTML = `
         <div class="card bg-warning">
             <div class-"card-body text-light">
                 <h2 class="card-title">Resultado:</h2>
                 <p>El Precio de ${datosMoneda.FROMSYMBOL} a moneda 
-                ${datosMoneda.TOSYMBOL} es de : $ ${precio}
+                ${datosMoneda.TOSYMBOL} es de : $ ${precio}</p>
+                <p>Variación de último día: % ${porcentaje}</p>
+                <p>Última actualización: ${actualizado}</p>
             </div>
         </div>
         `;
-        //insertar resultado
-        document.querySelector('#resultado').innerHTML = templateHTML;
+        
+        this.mostrarOcultarSpinner('block');
+
+        setTimeout(() => {
+            //insertar resultado
+            document.querySelector('#resultado').innerHTML = templateHTML;
+            //ocultar spinner
+            this.mostrarOcultarSpinner('none');
+        }, 3000);
+    }
+    //mostrar un spinner de carga al enviar cotizacion
+    mostrarOcultarSpinner(vista){
+        const spinner = document.querySelector('.contenido-spinner');
+        spinner.style.display = vista;
     }
 
 
